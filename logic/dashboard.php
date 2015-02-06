@@ -40,12 +40,13 @@ class Dashboard
 		
 		global $sql;
 		if($timestamp)
-			$q = $sql->prepare('SELECT * FROM messages WHERE receiver_id=? AND date > ? ORDER BY date');
+			$q = $sql->prepare('SELECT * FROM messages WHERE (receiver_id=? OR sender_id=?) AND date > ? ORDER BY date');
 		else // timestamp = 0
-			$q = $sql->prepare('SELECT * FROM messages WHERE receiver_id=? AND date > ? ORDER BY date LIMIT 20');
+			$q = $sql->prepare('SELECT * FROM messages WHERE (receiver_id=? OR sender_id=?) AND date > ? ORDER BY date LIMIT 20');
 			
 		$q->bindValue(1,Auth::user()->id);
-		$q->bindValue(2,$timestamp);//echo $timestamp;
+		$q->bindValue(2,Auth::user()->id);
+		$q->bindValue(3,$timestamp);//echo $timestamp;
 		$q->execute();
 		
 		echo json_encode($q->fetchAll(PDO::FETCH_ASSOC));
